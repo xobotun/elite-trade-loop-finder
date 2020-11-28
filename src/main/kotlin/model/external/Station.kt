@@ -8,6 +8,7 @@ data class Station (
     val id: Long,
     val systemId: Long,
     val name: String,
+    val type: String?,
     val prohibitedCommodities: Set<String>?,
     val distanceToStar: Int,
     val maxLandingPadSize: String?,

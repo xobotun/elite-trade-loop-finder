@@ -37,13 +37,13 @@ class Filter {
         val maxStationDistance = props.getProperty("filter.station.distance.max").toInt()
         val onlyLargeLandingPad = props.getProperty("filter.station.onlyL").toBoolean()
         val onlySpaceStations = props.getProperty("filter.station.onlySpace").toBoolean()
-//        val noTrollingCarriers = props.getProperty("filter.station.noCarriers").toBoolean()
+        val noTrollingCarriers = props.getProperty("filter.station.noCarriers").toBoolean()
 
         stations = data.stations.stream()
             .filter { it.distanceToStar <= maxStationDistance || maxStationDistance == -1 }
             .filter { onlyLargeLandingPad && it.maxLandingPadSize == "L" || !onlyLargeLandingPad }
             .filter { onlySpaceStations && !it.isPlanetary || !onlySpaceStations }
-//            .filter { noTrollingCarriers && !it.isPlanetary || !onlySpaceStations }
+            .filter { noTrollingCarriers && it.type != "Fleet Carrier" || !noTrollingCarriers }
             .filter { it.hasDocking }
             .filter { it.hasMarket }
             .collect(Collectors.toList())

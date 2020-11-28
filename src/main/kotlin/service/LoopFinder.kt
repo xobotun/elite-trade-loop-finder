@@ -61,6 +61,7 @@ class LoopFinder(val data: AllData) {
             .flatMap { pair -> pair.first.stations().stream().flatMap { firstStation -> pair.second.stations().stream().map { secondStation -> Pair(firstStation, secondStation) } } }
             .flatMap { it.first.listings().stream().map { firstListing -> Pair(firstListing, stationsListings[it.second]!![firstListing.commodityId]) } }
             .filter { it.second != null }
+            .filter { isPermittedCommodity(it.first, it.second!!) }
             .map { createLoopRoute(it as Pair<MarketListing, MarketListing>) }
             .filter { it.revenue() > minProfit }
             .collect(Collectors.toList())
@@ -96,6 +97,15 @@ class LoopFinder(val data: AllData) {
     private fun getProfit(from: MarketListing, to: MarketListing) = to.sellPrice - from.buyPrice
 
     private fun makeOrderedPair(a: StarSystem, b: StarSystem) = if (a.id < b.id) Pair(a, b) else Pair(b, a)
+
+    private fun isPermittedCommodity(from: MarketListing, to: MarketListing) : Boolean {
+        val commodity = commodityMap[from.commodityId]!!.name
+
+        val firstForbidden = stationMap[from.stationId]!!.prohibitedCommodities
+        val secondForbidden = stationMap[to.stationId]!!.prohibitedCommodities
+
+        return (firstForbidden != null && !firstForbidden.contains(commodity)) && (secondForbidden != null && !secondForbidden.contains(commodity))
+    }
 
     private fun StarSystem.stations() = systemsStations[id]!!
 

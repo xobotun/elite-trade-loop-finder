@@ -7,19 +7,22 @@ import java.util.*
 
 class Printer {
 
-    val targetWidth: Int = props.getProperty("output.width").toInt()
+    val targetWidth = props.getProperty("output.width").toInt()
+    val printBorders = props.getProperty("output.printBorders").toBoolean()
 
     fun print(routes: List<LoopRoute>) {
         routes.forEach { it.print() }
     }
 
     private fun LoopRoute.print() {
+        if (printBorders) printThreeThings("//", "---" ,"\\\\", '=')
         printSystems()
         printStations()
         printStationDistances()
         printPrices()
         printStocks()
         printListingDates()
+        if (printBorders) printThreeThings("\\\\", "---" ,"//", '=')
         println()
     }
 
@@ -59,7 +62,7 @@ class Printer {
     private fun LoopRoute.printStocks() {
         val supply = "${buy.listing.supply} in stock"
         val demand = "${sell.listing.demand} needed"
-        val commodity = "${buy.commodity}"
+        val commodity = "${buy.commodity.name}"
 
         printThreeThings("$supply ", " $commodity ", " $demand", ' ')
     }
