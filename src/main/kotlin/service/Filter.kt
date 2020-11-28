@@ -37,17 +37,19 @@ class Filter {
         val maxStationDistance = props.getProperty("filter.station.distance.max").toInt()
         val onlyLargeLandingPad = props.getProperty("filter.station.onlyL").toBoolean()
         val onlySpaceStations = props.getProperty("filter.station.onlySpace").toBoolean()
+//        val noTrollingCarriers = props.getProperty("filter.station.noCarriers").toBoolean()
 
         stations = data.stations.stream()
             .filter { it.distanceToStar <= maxStationDistance || maxStationDistance == -1 }
             .filter { onlyLargeLandingPad && it.maxLandingPadSize == "L" || !onlyLargeLandingPad }
             .filter { onlySpaceStations && !it.isPlanetary || !onlySpaceStations }
+//            .filter { noTrollingCarriers && !it.isPlanetary || !onlySpaceStations }
             .filter { it.hasDocking }
             .filter { it.hasMarket }
             .collect(Collectors.toList())
 
         val minSupply = props.getProperty("filter.commodity.minSupply").toInt()
-        val minAge = (System.currentTimeMillis() - 3 * 24 * 60 * 60 * 1000) / 1000 // 3 days
+        val minAge = now - 3 * 24 * 60 * 60 // 3 days
 
         listings = data.listings.stream()
             .filter { it.supply >= minSupply || minSupply == -1 }

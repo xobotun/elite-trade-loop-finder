@@ -8,6 +8,8 @@ fun main (args: Array<String>) {
     val loader = Loader()
     val filter = Filter()
     val loopFinder: LoopFinder
+    val sorter = Sorter()
+    val printer = Printer()
 
     println("Reading data from files...")
     val readingFromFS = measureTimeMillis { loader.loadData() }
@@ -25,7 +27,11 @@ fun main (args: Array<String>) {
     val findingLoops = measureTimeMillis { loopFinder.findLoops() }
     println("Found ${loopFinder.routes!!.size} loops above ${props.getProperty("filter.profitPerUnit.noLess")} money/unit in $findingLoops milliseconds.")
 
+    println("Sorting loops in a best way...")
+    val sortingLoops = measureTimeMillis { sorter.sort(loopFinder.routes!!) }
+    println("Sorted in $sortingLoops milliseconds.")
 
-
+    println("Results:")
+    printer.print(sorter.routes!!)
 }
 
