@@ -6,6 +6,7 @@ package com.xobotun.elite_trade_loop_finder.model.external
  */
 data class Station (
     val id: Long,
+    val systemId: Long,
     val name: String,
     val prohibitedCommodities: Set<String>?,
     val distanceToStar: Int,

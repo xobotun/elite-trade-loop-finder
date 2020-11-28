@@ -1,5 +1,6 @@
 package com.xobotun.elite_trade_loop_finder.model.external
 
+import com.fasterxml.jackson.annotation.JsonProperty
 import com.fasterxml.jackson.dataformat.csv.CsvSchema
 
 /**
@@ -14,6 +15,7 @@ data class MarketListing (
     val demand: Long,
     val buyPrice: Long,
     val sellPrice: Long,
+    @JsonProperty("collected_at")
     val timestamp: Long,
 )
 

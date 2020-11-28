@@ -6,12 +6,14 @@ import com.fasterxml.jackson.dataformat.csv.CsvMapper
 import com.fasterxml.jackson.module.kotlin.KotlinModule
 import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
 import com.fasterxml.jackson.module.kotlin.readValue
+import com.xobotun.elite_trade_loop_finder.model.AllData
 import com.xobotun.elite_trade_loop_finder.model.external.*
 import java.io.File
-import java.util.*
 
+/**
+ * Loads data from eddb.io dumps from somewhere on filesystem into memory.
+ */
 class Loader {
-    val props = Properties()
     val jsonReader = jacksonObjectMapper()
         .configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false)
     val csvReader = CsvMapper()
@@ -24,7 +26,6 @@ class Loader {
     var listings: List<MarketListing>? = null
 
     init {
-        props.load(javaClass.classLoader.getResourceAsStream("application.properties"))
         jsonReader.propertyNamingStrategy = SNAKE_CASE
         csvReader .propertyNamingStrategy = SNAKE_CASE
     }
@@ -40,4 +41,6 @@ class Loader {
         val iterator = listingReader.readValues<MarketListing>(File(path + "listings.csv"))
         listings = iterator.readAll()
     }
+
+    fun toData() = AllData(systems!!, stations!!, commodities!!, listings!!)
 }
