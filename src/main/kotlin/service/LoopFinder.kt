@@ -68,7 +68,8 @@ class LoopFinder(val data: AllData) {
     }
 
     private fun StarSystem.nearestSystems() : Set<StarSystem> {
-        val maxDistance = props.getProperty("filter.system.jumpDistance").toDouble()
+        val minDistance = props.getProperty("filter.system.jumpDistance.min").toDouble()
+        val maxDistance = props.getProperty("filter.system.jumpDistance.max").toDouble()
         if (maxDistance == -1.0) return xMap.values.toSet()
 
         val xNeighbours = xMap.subMap(x - maxDistance, x + maxDistance).values.stream().collect(Collectors.toSet())
@@ -79,6 +80,7 @@ class LoopFinder(val data: AllData) {
         trueNeighbours.retainAll(yNeighbours)
         trueNeighbours.retainAll(zNeighbours)
         trueNeighbours.removeIf { distanceTo(it) > maxDistance }
+        trueNeighbours.removeIf { distanceTo(it) < minDistance }
 
         return trueNeighbours
     }
