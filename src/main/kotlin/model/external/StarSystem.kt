@@ -1,5 +1,8 @@
 package com.xobotun.elite_trade_loop_finder.model.external
 
+import kotlin.math.pow
+import kotlin.math.sqrt
+
 /**
  * Populated system data class
  * Download via https://eddb.io/archive/v6/systems_populated.json
@@ -10,7 +13,9 @@ data class StarSystem (
     val x: Double,
     val y: Double,
     val z: Double,
-)
+) {
+    fun distanceTo(other: StarSystem) = sqrt((this.x - other.x).pow(2.0) + (this.y - other.y).pow(2.0) + (this.z - other.z).pow(2.0))
+}
 
 /*
 Raw json example below
