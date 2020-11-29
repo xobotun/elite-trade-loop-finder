@@ -49,7 +49,7 @@ class Filter {
             .collect(Collectors.toList())
 
         val minSupply = props.getProperty("filter.commodity.minSupply").toInt()
-        val minAgeDays = props.getProperty("minAgeDays").toInt()
+        val minAgeDays = props.getProperty("filter.commodity.minAgeDays").toInt()
         val minAge = now - minAgeDays * 24 * 60 * 60 // 3 days
 
         listings = data.listings.stream()
