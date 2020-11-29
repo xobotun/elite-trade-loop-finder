@@ -55,7 +55,7 @@ class LoopFinder(val data: AllData) {
     fun findLoops() {
         val minProfit = props.getProperty("filter.profitPerUnit.noLess").toInt()
 
-        routes = data.systems.stream()
+        routes = data.systems.stream().parallel()
             .flatMap { it.nearestSystems().stream().map { neighbour -> makeOrderedPair(it, neighbour) } }
             .distinct()
             .flatMap { pair -> pair.first.stations().stream().flatMap { firstStation -> pair.second.stations().stream().map { secondStation -> Pair(firstStation, secondStation) } } }

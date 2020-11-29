@@ -49,7 +49,8 @@ class Filter {
             .collect(Collectors.toList())
 
         val minSupply = props.getProperty("filter.commodity.minSupply").toInt()
-        val minAge = now - 3 * 24 * 60 * 60 // 3 days
+        val minAgeDays = props.getProperty("minAgeDays").toInt()
+        val minAge = now - minAgeDays * 24 * 60 * 60 // 3 days
 
         listings = data.listings.stream()
             .filter { it.supply >= minSupply || minSupply == -1 }

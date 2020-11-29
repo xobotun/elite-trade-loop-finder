@@ -3,7 +3,6 @@ package com.xobotun.elite_trade_loop_finder
 import com.xobotun.elite_trade_loop_finder.service.*
 import kotlin.system.measureTimeMillis
 
-// Run with -Dcom.sun.net.ssl.checkRevocation=false when downloading
 fun main (args: Array<String>) {
     Config.initProps()
     val curl = Downloader()
