@@ -30,7 +30,7 @@ private class RouteParams(route: LoopRoute) : Comparable<RouteParams> {
         jumpsPerRoute = (route.distanceJump() / jumpLength).nextUp().toInt()
 
         // https://confluence.fuelrats.com/display/public/FRKB/Supercruise+Travel+Times
-        // https://www.reddit.com/r/EliteDangerous/comments/4xdqw4/formula_for_supercruise_travel_times/d6fn5zz
+        // https://www.reddit.com/r/EliteDangerous/comments/4xdqw4/formula_for_supercruise_travel_times/d6fn5zz <-- also with trade times.
         val timeInSupercruise = log(route.distanceLocal() * 1.0, 1.035)
 
         secondsPerRoute = timeInSupercruise + secondsPerJump * jumpsPerRoute

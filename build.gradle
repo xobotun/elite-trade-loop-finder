@@ -7,6 +7,10 @@ version '1.0-SNAPSHOT'
 
 repositories {
     mavenCentral()
+
+    maven {
+        url  "https://dl.bintray.com/jkcclemens/maven"
+    }
 }
 
 dependencies {
@@ -15,4 +19,12 @@ dependencies {
     compile group: 'com.fasterxml.jackson.core', name: 'jackson-databind', version: '2.12.0-rc2'
     compile group: 'com.fasterxml.jackson.module', name: 'jackson-module-kotlin', version: '2.12.0-rc2'
     compile group: 'com.fasterxml.jackson.dataformat', name: 'jackson-dataformat-csv', version: '2.12.0-rc2'
+
+    implementation 'khttp:khttp:1.0.0'
+}
+
+tasks.withType(org.jetbrains.kotlin.gradle.tasks.KotlinCompile).all {
+    kotlinOptions {
+        jvmTarget = "1.8"
+    }
 }

@@ -3,13 +3,21 @@ package com.xobotun.elite_trade_loop_finder
 import com.xobotun.elite_trade_loop_finder.service.*
 import kotlin.system.measureTimeMillis
 
+// Run with -Dcom.sun.net.ssl.checkRevocation=false when downloading
 fun main (args: Array<String>) {
     Config.initProps()
+    val curl = Downloader()
     val loader = Loader()
     val filter = Filter()
     val loopFinder: LoopFinder
     val sorter = Sorter()
     val printer = Printer()
+
+    if (props.getProperty("eddb.files.download")!!.toBoolean()) {
+        println("Updating data from eddb.io...")
+        val updatingData = measureTimeMillis { curl.renew() }
+        println("Done in $updatingData millisenconds.")
+    }
 
     println("Reading data from files...")
     val readingFromFS = measureTimeMillis { loader.loadData() }
