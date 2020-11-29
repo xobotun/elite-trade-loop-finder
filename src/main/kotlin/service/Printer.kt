@@ -27,49 +27,49 @@ class Printer {
     }
 
     private fun LoopRoute.printSystems() {
-        val fromName = buy.system.name
-        val toName = sell.system.name
+        val fromName = buyA.system.name
+        val toName = sellA.system.name
         val distance = "%.2f ly".format(Locale.ROOT, distanceJump())
 
         printThreeThings("$fromName ", " $distance ", " $toName", ' ')
     }
 
     private fun LoopRoute.printStations() {
-        val fromName = buy.station.name
-        val toName = sell.station.name
+        val fromName = buyA.station.name
+        val toName = sellA.station.name
 
         printThreeThings("$fromName ", "", " $toName", '>')
     }
 
     private fun LoopRoute.printStationDistances() {
-        val fromPadding = " ".repeat(buy.station.name.length)
-        val toPadding = " ".repeat(sell.station.name.length)
+        val fromPadding = " ".repeat(buyA.station.name.length)
+        val toPadding = " ".repeat(sellA.station.name.length)
 
-        val fromDistance = "${buy.station.distanceToStar} ls"
-        val toDistance = "${sell.station.distanceToStar} ls"
+        val fromDistance = "${buyA.station.distanceToStar} ls"
+        val toDistance = "${sellA.station.distanceToStar} ls"
 
         printThreeThings("$fromPadding $fromDistance ", "", " $toDistance $toPadding", ' ')
     }
 
     private fun LoopRoute.printPrices() {
-        val fromPrice = "${buy.listing.buyPrice} ☼/u"
-        val toPrice = "${sell.listing.sellPrice} ☼/u"
+        val fromPrice = "${buyA.listing.buyPrice} ☼/u"
+        val toPrice = "${sellA.listing.sellPrice} ☼/u"
         val revenue = "${revenue()} ☼/u"
 
         printThreeThings("$fromPrice ", " $revenue ", " $toPrice", ' ')
     }
 
     private fun LoopRoute.printStocks() {
-        val supply = "${buy.listing.supply} in stock"
-        val demand = "${sell.listing.demand} needed"
-        val commodity = "${buy.commodity.name}"
+        val supply = "${buyA.listing.supply} in stock"
+        val demand = "${sellA.listing.demand} needed"
+        val commodity = "${buyA.commodity.name}"
 
         printThreeThings("$supply ", " $commodity ", " $demand", ' ')
     }
 
     private fun LoopRoute.printListingDates() {
-        val left  = Duration.of(now -  buy.listing.timestamp, ChronoUnit.SECONDS).toHuman()
-        val right = Duration.of(now - sell.listing.timestamp, ChronoUnit.SECONDS).toHuman()
+        val left  = Duration.of(now -  buyA.listing.timestamp, ChronoUnit.SECONDS).toHuman()
+        val right = Duration.of(now - sellA.listing.timestamp, ChronoUnit.SECONDS).toHuman()
 
         printThreeThings("$left ", "", " $right", ' ')
     }

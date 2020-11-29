@@ -6,13 +6,16 @@ import com.xobotun.elite_trade_loop_finder.model.external.StarSystem
 import com.xobotun.elite_trade_loop_finder.model.external.Station
 
 data class LoopRoute(
-    val buy: PickupPoint,
-    val sell: PickupPoint
-
+    val buyA: PickupPoint,
+    val sellA: PickupPoint,
+    var buyB: PickupPoint? = null,
+    var sellB: PickupPoint? = null,
 ) {
-    fun revenue() = sell.listing.sellPrice - buy.listing.buyPrice
-    fun distanceLocal() = buy.station.distanceToStar + sell.station.distanceToStar
-    fun distanceJump() = buy.system.distanceTo(sell.system)
+    fun revenueA() = sellA.listing.sellPrice - buyA.listing.buyPrice
+    fun revenueB() = (sellB?.listing?.sellPrice?:0) - (buyB?.listing?.buyPrice?:0)
+    fun revenue() = revenueA() + revenueB()
+    fun distanceLocal() = buyA.station.distanceToStar + sellA.station.distanceToStar
+    fun distanceJump() = buyA.system.distanceTo(sellA.system)
 }
 
 data class PickupPoint(

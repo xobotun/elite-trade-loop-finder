@@ -38,7 +38,7 @@ fun main (args: Array<String>) {
     val sortingLoops = measureTimeMillis { sorter.sort(loopFinder.routes!!) }
     println("Sorted in $sortingLoops milliseconds.")
 
-    println("Results:")
+    println("Results, from least to most efficient:")
     printer.print(sorter.routes!!)
 }
 
