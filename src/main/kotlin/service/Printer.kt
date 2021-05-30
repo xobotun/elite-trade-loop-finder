@@ -11,6 +11,8 @@ class Printer {
     val printBorders = props.getProperty("output.printBorders").toBoolean()
     val printTimeParams = props.getProperty("output.printTimeParams").toBoolean()
 
+    val cargoSize = props.getProperty("ship.haul.units").toInt()
+
     fun print(routes: List<LoopRoute>) {
         routes.forEach { it.print() }
     }
@@ -31,6 +33,7 @@ class Printer {
             printListingDatesB()
         }
 
+        printTotalProfit()
         if (printTimeParams) printTimeParams()
         if (printBorders) printLowerBorder()
         println()
@@ -110,12 +113,18 @@ class Printer {
         printThreeThings("$right ", "", " $left", ' ')
     }
 
+    private fun LoopRoute.printTotalProfit() {
+        val revenue = "${revenue()} ☼/u"
+        val totalRevenue = "${revenue() * cargoSize} ☼"
+
+        printThreeThings("", "$revenue * $cargoSize u = $totalRevenue", "", ' ')
+    }
+
     private fun LoopRoute.printTimeParams() {
         val secondsPerRoute = "%.2f".format(Locale.ROOT, routeParams.secondsPerRoute)
         val moneyPerUnitPerSecond = "%.2f".format(Locale.ROOT, routeParams.moneyPerUnitPerSecond)
-        val totalRevenue = "${revenue()} ☼/u"
 
-        printThreeThings("$secondsPerRoute seconds per route", totalRevenue, "$moneyPerUnitPerSecond money per unit per second", ' ')
+        printThreeThings("$secondsPerRoute seconds per route", "", "$moneyPerUnitPerSecond money per unit per second", ' ')
     }
 
     private fun printUpperBorder() {

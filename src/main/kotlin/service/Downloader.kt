@@ -19,6 +19,7 @@ class Downloader {
     fun renew() {
         listOf("commodities.json", "listings.csv", "systems_populated.json", "stations.json").stream()
             .filter { shouldDownload(it, getLocalDate(it)) }
+            .peek{ println("Need to update '$it'") }
             .forEach { download(it) }
     }
 
@@ -34,8 +35,9 @@ class Downloader {
         val downloaded = get(webPath + resource)
         val path = Path.of(filePath + resource)
 
-        Files.write(path, downloaded.raw.readAllBytes())
+        Files.write(path, downloaded.content)
         Files.setLastModifiedTime(path, FileTime.from(parseLastModified(downloaded.headers["Last-Modified"]).toInstant(ZoneOffset.UTC)))
+        println("Saved ${downloaded.content.size} bytes to '$path'")
     }
 
 }
