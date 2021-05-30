@@ -9,13 +9,14 @@ class Printer {
 
     val targetWidth = props.getProperty("output.width").toInt()
     val printBorders = props.getProperty("output.printBorders").toBoolean()
+    val printTimeParams = props.getProperty("output.printTimeParams").toBoolean()
 
     fun print(routes: List<LoopRoute>) {
         routes.forEach { it.print() }
     }
 
     private fun LoopRoute.print() {
-        if (printBorders) printThreeThings("//", "---" ,"\\\\", '=')
+        if (printBorders) printUpperBorder()
         printSystems()
         printStations()
         printStationDistances()
@@ -30,7 +31,8 @@ class Printer {
             printListingDatesB()
         }
 
-        if (printBorders) printThreeThings("\\\\", "---" ,"//", '=')
+        if (printTimeParams) printTimeParams()
+        if (printBorders) printLowerBorder()
         println()
     }
 
@@ -87,7 +89,8 @@ class Printer {
         val toPrice = "${sellB!!.listing.sellPrice} ☼/u"
         val revenue = "${revenueB()} ☼/u"
 
-        printThreeThings("$fromPrice ", " $revenue ", " $toPrice", ' ')
+        // Here `from` and `to` are reversed
+        printThreeThings("$toPrice ", " $revenue ", " $fromPrice", ' ')
     }
 
     private fun LoopRoute.printStocksB() {
@@ -95,14 +98,32 @@ class Printer {
         val demand = "${sellB!!.listing.demand} needed"
         val commodity = buyB!!.commodity.name
 
-        printThreeThings("$supply ", " $commodity ", " $demand", ' ')
+        // Here `from` and `to` are reversed
+        printThreeThings("$demand ", " $commodity ", " $supply", ' ')
     }
 
     private fun LoopRoute.printListingDatesB() {
         val left  = Duration.of(now -  buyB!!.listing.timestamp, ChronoUnit.SECONDS).toHuman()
         val right = Duration.of(now - sellB!!.listing.timestamp, ChronoUnit.SECONDS).toHuman()
 
-        printThreeThings("$left ", "", " $right", ' ')
+        // Here `from` and `to` are reversed
+        printThreeThings("$right ", "", " $left", ' ')
+    }
+
+    private fun LoopRoute.printTimeParams() {
+        val secondsPerRoute = "%.2f".format(Locale.ROOT, routeParams.secondsPerRoute)
+        val moneyPerUnitPerSecond = "%.2f".format(Locale.ROOT, routeParams.moneyPerUnitPerSecond)
+        val totalRevenue = "${revenue()} ☼/u"
+
+        printThreeThings("$secondsPerRoute seconds per route", totalRevenue, "$moneyPerUnitPerSecond money per unit per second", ' ')
+    }
+
+    private fun printUpperBorder() {
+        printThreeThings("//", "---" ,"\\\\", '=')
+    }
+
+    private fun printLowerBorder() {
+        printThreeThings("\\\\", "---" ,"//", '=')
     }
 
     private fun printThreeThings(a: String, b: String, c: String, filler: Char) {

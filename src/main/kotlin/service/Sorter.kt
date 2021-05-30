@@ -14,14 +14,13 @@ class Sorter {
 
     fun sort(unsorted: List<LoopRoute>) {
         routes = unsorted.stream()
-            .map { Pair(it, RouteParams(it)) }
-            .sorted { a, b -> a.second.compareTo(b.second) }
-            .map { it.first }
+            .peek { it.calculateParams() }
+            .sorted { a, b -> a.routeParams.compareTo(b.routeParams) }
             .collect(Collectors.toList())
     }
 }
 
-private class RouteParams(route: LoopRoute) : Comparable<RouteParams> {
+class RouteParams(route: LoopRoute) : Comparable<RouteParams> {
     val jumpsPerRoute: Int
     val secondsPerRoute: Double
     val moneyPerUnitPerSecond: Double
@@ -40,4 +39,8 @@ private class RouteParams(route: LoopRoute) : Comparable<RouteParams> {
     override fun compareTo(other: RouteParams): Int {
         return moneyPerUnitPerSecond.compareTo(other.moneyPerUnitPerSecond)
     }
+}
+
+internal fun LoopRoute.calculateParams() {
+    routeParams = RouteParams(this)
 }

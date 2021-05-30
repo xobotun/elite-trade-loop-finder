@@ -56,13 +56,14 @@ class LoopFinder(val data: AllData) {
         val minProfit = props.getProperty("filter.profitPerUnit.noLess").toInt()
 
         routes = data.systems.stream().parallel()
-            .flatMap { it.nearestSystems().stream().map { neighbour -> makeOrderedPair(it, neighbour) } }
-            .distinct()
-            .flatMap { pair -> pair.first.stations().stream().flatMap { firstStation -> pair.second.stations().stream().map { secondStation -> Pair(firstStation, secondStation) } } }
-            .flatMap { it.first.listings().stream().map { firstListing -> Pair(firstListing, stationsListings[it.second]!![firstListing.commodityId]) } }
-            .filter { it.second != null }
-            .filter { isPermittedCommodity(it.first, it.second!!) }
-            .map { createLoopRoute(it as Pair<MarketListing, MarketListing>) }
+            .flatMap { it.nearestSystems().stream().map { neighbour -> makeOrderedPair(it, neighbour) } } // Create all pairs of systems near to each other
+            .distinct() // There will be two pairs (a, b), make them one
+            .flatMap { pair -> pair.first.stations().stream().flatMap { firstStation -> pair.second.stations().stream().map { secondStation -> Pair(firstStation, secondStation) } } } // Map system pairs to station pairs. E.g. 2 stations in one system and 3 stations in another will make 6 pairs.
+            .flatMap { it.first.listings().stream().map { firstListing -> Pair(firstListing, stationsListings[it.second]!![firstListing.commodityId]) } } // Map all commodities of the first station to the same commodity of the second
+            .filter { it.second != null } // If the second does not have this commodity, drop the pair
+            .filter { isPermittedCommodity(it.first, it.second!!) } // If the commodity is forbidden on either station, drop too
+            .map { createLoopRoute(it as Pair<MarketListing, MarketListing>) } // Create loop from the least pricey to most pricey place
+            .filter { it.revenue() > 0 } // There were cases with Hydrogen fuel that both directions were net negative
             .peek { addReverseVariants(it) }
             .filter { it.revenue() > minProfit }
             .collect(Collectors.toList())
@@ -73,13 +74,16 @@ class LoopFinder(val data: AllData) {
         val maxDistance = props.getProperty("filter.system.jumpDistance.max").toDouble()
         if (maxDistance == -1.0) return xMap.values.toSet()
 
+        // Get all neighbourhs by one coordinate
         val xNeighbours = xMap.subMap(x - maxDistance, x + maxDistance).values.stream().collect(Collectors.toSet())
         val yNeighbours = yMap.subMap(y - maxDistance, y + maxDistance).values.stream().collect(Collectors.toSet())
         val zNeighbours = zMap.subMap(z - maxDistance, z + maxDistance).values.stream().collect(Collectors.toSet())
 
+        // And find an intersection of the sets
         val trueNeighbours = xNeighbours.toMutableSet()
         trueNeighbours.retainAll(yNeighbours)
         trueNeighbours.retainAll(zNeighbours)
+        // And remove the ones outside the 4d-torus
         trueNeighbours.removeIf { distanceTo(it) > maxDistance }
         trueNeighbours.removeIf { distanceTo(it) < minDistance }
 
@@ -120,10 +124,11 @@ class LoopFinder(val data: AllData) {
     private fun isPermittedCommodity(from: MarketListing, to: MarketListing) : Boolean {
         val commodity = commodityMap[from.commodityId]!!.name
 
-        val firstForbidden = stationMap[from.stationId]!!.prohibitedCommodities
-        val secondForbidden = stationMap[to.stationId]!!.prohibitedCommodities
+        // Not sure if `prohibited_commodities` is always present
+        val firstForbidden = stationMap[from.stationId]!!.prohibitedCommodities?: emptySet()
+        val secondForbidden = stationMap[to.stationId]!!.prohibitedCommodities?: emptySet()
 
-        return (firstForbidden != null && !firstForbidden.contains(commodity)) && (secondForbidden != null && !secondForbidden.contains(commodity))
+        return (!firstForbidden.contains(commodity)) && (!secondForbidden.contains(commodity))
     }
 
     private fun StarSystem.stations() = systemsStations[id]!!

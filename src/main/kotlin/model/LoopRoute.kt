@@ -4,6 +4,7 @@ import com.xobotun.elite_trade_loop_finder.model.external.Commodity
 import com.xobotun.elite_trade_loop_finder.model.external.MarketListing
 import com.xobotun.elite_trade_loop_finder.model.external.StarSystem
 import com.xobotun.elite_trade_loop_finder.model.external.Station
+import com.xobotun.elite_trade_loop_finder.service.RouteParams
 
 data class LoopRoute(
     val buyA: PickupPoint,
@@ -11,6 +12,8 @@ data class LoopRoute(
     var buyB: PickupPoint? = null,
     var sellB: PickupPoint? = null,
 ) {
+    lateinit var routeParams: RouteParams // Initialized in sorter
+
     fun revenueA() = sellA.listing.sellPrice - buyA.listing.buyPrice
     fun revenueB() = (sellB?.listing?.sellPrice?:0) - (buyB?.listing?.buyPrice?:0)
     fun revenue() = revenueA() + revenueB()
