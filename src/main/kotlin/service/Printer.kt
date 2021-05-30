@@ -22,6 +22,14 @@ class Printer {
         printPrices()
         printStocks()
         printListingDates()
+
+        if (buyB != null && sellB != null) {
+            printThreeThings(" ".repeat(5), "", " ".repeat(5), '<')
+            printPricesB()
+            printStocksB()
+            printListingDatesB()
+        }
+
         if (printBorders) printThreeThings("\\\\", "---" ,"//", '=')
         println()
     }
@@ -54,7 +62,7 @@ class Printer {
     private fun LoopRoute.printPrices() {
         val fromPrice = "${buyA.listing.buyPrice} ☼/u"
         val toPrice = "${sellA.listing.sellPrice} ☼/u"
-        val revenue = "${revenue()} ☼/u"
+        val revenue = "${revenueA()} ☼/u"
 
         printThreeThings("$fromPrice ", " $revenue ", " $toPrice", ' ')
     }
@@ -62,7 +70,7 @@ class Printer {
     private fun LoopRoute.printStocks() {
         val supply = "${buyA.listing.supply} in stock"
         val demand = "${sellA.listing.demand} needed"
-        val commodity = "${buyA.commodity.name}"
+        val commodity = buyA.commodity.name
 
         printThreeThings("$supply ", " $commodity ", " $demand", ' ')
     }
@@ -70,6 +78,29 @@ class Printer {
     private fun LoopRoute.printListingDates() {
         val left  = Duration.of(now -  buyA.listing.timestamp, ChronoUnit.SECONDS).toHuman()
         val right = Duration.of(now - sellA.listing.timestamp, ChronoUnit.SECONDS).toHuman()
+
+        printThreeThings("$left ", "", " $right", ' ')
+    }
+
+    private fun LoopRoute.printPricesB() {
+        val fromPrice = "${buyB!!.listing.buyPrice} ☼/u"
+        val toPrice = "${sellB!!.listing.sellPrice} ☼/u"
+        val revenue = "${revenueB()} ☼/u"
+
+        printThreeThings("$fromPrice ", " $revenue ", " $toPrice", ' ')
+    }
+
+    private fun LoopRoute.printStocksB() {
+        val supply = "${buyB!!.listing.supply} in stock"
+        val demand = "${sellB!!.listing.demand} needed"
+        val commodity = buyB!!.commodity.name
+
+        printThreeThings("$supply ", " $commodity ", " $demand", ' ')
+    }
+
+    private fun LoopRoute.printListingDatesB() {
+        val left  = Duration.of(now -  buyB!!.listing.timestamp, ChronoUnit.SECONDS).toHuman()
+        val right = Duration.of(now - sellB!!.listing.timestamp, ChronoUnit.SECONDS).toHuman()
 
         printThreeThings("$left ", "", " $right", ' ')
     }

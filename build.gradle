@@ -9,7 +9,7 @@ repositories {
     mavenCentral()
 
     maven {
-        url  "https://dl.bintray.com/jkcclemens/maven"
+        url  "https://jitpack.io"
     }
 }
 
@@ -20,7 +20,7 @@ dependencies {
     compile group: 'com.fasterxml.jackson.module', name: 'jackson-module-kotlin', version: '2.12.0-rc2'
     compile group: 'com.fasterxml.jackson.dataformat', name: 'jackson-dataformat-csv', version: '2.12.0-rc2'
 
-    implementation 'khttp:khttp:1.0.0'
+    implementation 'com.github.jkcclemens:khttp:-SNAPSHOT'
 }
 
 tasks.withType(org.jetbrains.kotlin.gradle.tasks.KotlinCompile).all {

@@ -63,6 +63,7 @@ class LoopFinder(val data: AllData) {
             .filter { it.second != null }
             .filter { isPermittedCommodity(it.first, it.second!!) }
             .map { createLoopRoute(it as Pair<MarketListing, MarketListing>) }
+            .peek { addReverseVariants(it) }
             .filter { it.revenue() > minProfit }
             .collect(Collectors.toList())
     }
@@ -94,6 +95,22 @@ class LoopFinder(val data: AllData) {
         val to   = if (directMoreProfitable) points.second else points.first
 
         return LoopRoute(from.makePickupPoint(), to.makePickupPoint())
+    }
+
+    private fun addReverseVariants(loop: LoopRoute) {
+        var maxAdditionalRevenue = 0L
+
+        for (buyB in stationsListings[loop.sellA.station]!!.values) {
+            val sellB = stationsListings[loop.buyA.station]!![buyB.commodityId]
+            if (sellB != null) {
+                val profit = getProfit(buyB, sellB)
+                if (profit > maxAdditionalRevenue) {
+                    maxAdditionalRevenue = profit
+                    loop.buyB = buyB.makePickupPoint()
+                    loop.sellB = sellB.makePickupPoint()
+                }
+            }
+        }
     }
 
     private fun getProfit(from: MarketListing, to: MarketListing) = to.sellPrice - from.buyPrice
